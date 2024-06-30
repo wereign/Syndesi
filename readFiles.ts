@@ -49,7 +49,7 @@ function loadMarkdown(filePath: string): void {
 				}
 				// Start a new node
 				const uuid = uuidv4();
-				let tmpCard: ObsidianCard = { uuid: uuid, text: line };
+				const tmpCard: ObsidianCard = { uuid: uuid, text: line };
 				currentNode = { level: level, card: tmpCard };
 			} else if (currentNode) {
 				// Append to the current node's text if not a new header
