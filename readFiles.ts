@@ -66,6 +66,7 @@ function loadMarkdown(filePath: string): void {
 	});
 }
 
+
 function printNodes(nodes: Node[]): void {
 	nodes.forEach((node, index) => {
 		console.log(`Node ${index + 1}:`);
