@@ -26,46 +26,51 @@ function classifyHeader(line: string): number {
 
 const filePath = "./test-media/4.Data Engineering.md";
 
-function loadMarkdown(filePath: string): void {
-	const allNodes: Node[] = [];
-
-	fs.readFile(filePath, "utf-8", (err, data) => {
-		if (err) {
-			console.error("Error reading:", err);
-			return;
-		}
-
-		const lines: string[] = data.split("\n");
-
-		let currentNode: Node | null = null;
-
-		for (const line of lines) {
-			const level = classifyHeader(line);
-
-			if (level > -1) {
-				// Save the current node if it exists
-				if (currentNode) {
-					allNodes.push(currentNode);
-				}
-				// Start a new node
-				const uuid = uuidv4();
-				const tmpCard: ObsidianCard = { uuid: uuid, text: line };
-				currentNode = { level: level, card: tmpCard };
-			} else if (currentNode) {
-				// Append to the current node's text if not a new header
-				currentNode.card.text += "\n" + line;
-			}
-		}
-
-		// Push the last node if it exists
-		if (currentNode) {
-			allNodes.push(currentNode);
-		}
-
-		printNodes(allNodes);
-	});
+function readMarkdownFile(filePath: string): string {
+	try {
+		return fs.readFileSync(filePath, "utf-8");
+	} catch (err) {
+		console.error("Error reading file:", err);
+		return "";
+	}
 }
 
+function processMarkdown(filePath: string): Node[] {
+	const data = readMarkdownFile(filePath);
+	return parseMarkdownData(data);
+}
+
+function parseMarkdownData(data: string): Node[] {
+	const lines: string[] = data.split("\n");
+	const allNodes: Node[] = [];
+
+	let currentNode: Node | null = null;
+
+	for (const line of lines) {
+		const level = classifyHeader(line);
+
+		if (level > -1) {
+			// Save the current node if it exists
+			if (currentNode) {
+				allNodes.push(currentNode);
+			}
+			// Start a new node
+			const uuid = uuidv4();
+			let tmpCard: ObsidianCard = { uuid: uuid, text: line };
+			currentNode = { level: level, card: tmpCard };
+		} else if (currentNode) {
+			// Append to the current node's text if not a new header
+			currentNode.card.text += "\n" + line;
+		}
+	}
+
+	// Push the last node if it exists
+	if (currentNode) {
+		allNodes.push(currentNode);
+	}
+
+	return allNodes;
+}
 
 function printNodes(nodes: Node[]): void {
 	nodes.forEach((node, index) => {
@@ -77,4 +82,18 @@ function printNodes(nodes: Node[]): void {
 	});
 }
 
-loadMarkdown(filePath);
+function main() {
+	try {
+		const nodes = processMarkdown(filePath);
+		printNodes(nodes);
+		construct_tree(nodes);
+	} catch (err) {
+		console.error("Error:", err);
+	}
+}
+
+function construct_tree(allNodes: Node[]) {
+	console.log("Length of all nodes", allNodes.length);
+}
+
+main();
