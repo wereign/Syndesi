@@ -24,7 +24,7 @@ export default class Syndesi extends Plugin {
 				console.log("Document path", docAbsPath);
 				console.log("Canvas path", canvasAbsPath);
 
-				const pythonPath =`${basePath}\\.obsidian\\plugins\\obsidian-sample-plugin\\main.py`;
+				const pythonPath =`${basePath}\\.obsidian\\plugins\\Syndesi\\main.py`;
 				const command = `python "${pythonPath}" --src "${docAbsPath}" --dest "${canvasAbsPath}"`; // Replace with your command
 
 				exec(command, (error, stdout, stderr) => {
