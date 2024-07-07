@@ -116,18 +116,13 @@ class Tree:
         Returns:
             int: integer describing the heading level 
         """
-        h1_id = '# '
-        h2_id = '## '
-        h3_id = '### '
 
-        if line[:len(h1_id)] == h1_id:
-            return 1
+        h_ids = ['#'*i + ' ' for i in range(1,7)]
 
-        elif line[:len(h2_id)] == h2_id:
-            return 2
+        for i,e in enumerate(h_ids):
 
-        elif line[:len(h3_id)] == h3_id:
-            return 3
+            if line[:len(e)] == e:
+                return i + 1
 
         else:
             return -1  # using 0 as file node level.
