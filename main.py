@@ -1,7 +1,4 @@
 import argparse
-
-
-from icecream import ic
 import uuid
 import os
 import json
