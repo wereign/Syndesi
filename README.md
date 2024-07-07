@@ -18,6 +18,7 @@ Take notes in obsidian, and let Syndesi turn them into visual mindmaps within an
 2. Press Ctrl (Cmd for Mac Users) + P, and the choose the `Syndesi: Convert Current Document to Mindmap` option.
 3. This should result in a new canvas file in your workspace, which will be your notes created into cards 
 
+![DemoGif](https://github.com/wereign/Syndesi/assets/101888489/030a48f2-3aed-491a-9038-bca72eb5aec2)
 
  ## Feedback
 Feedback : virenn9999@gmail.com
