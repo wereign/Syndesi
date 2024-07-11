@@ -42,6 +42,27 @@ class Node:
         self.change = self.shift = 0
         self._lmost_sibling = None
         self.number = number  # the idx of the node among it's siblings
+    
+    def assign_card_size(self):
+
+        lines = self.string.split('\n')
+        n_empty = 0
+
+        for line in lines:
+
+            if len(line) == 0:
+                n_empty += 1
+
+        
+        if (len(lines) - n_empty) == 1:
+            
+            print("Title Only",self.string)
+            print(n_empty)
+            print(len(lines))
+            print()
+            self.obsidian_json['height'] = 100
+        
+
 
     # rg algo functions
 
@@ -80,6 +101,8 @@ class Node:
             self.children.append(child_node)
         else:
             pass
+        
+
 
     def __repr__(self, with_content=False):
 

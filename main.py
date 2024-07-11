@@ -77,6 +77,16 @@ class Tree:
 
         return node_list[0]
 
+    def assign_sizes(self, root_node: Node):
+
+        root_node.assign_card_size()
+
+        if len(root_node.children) > 0:
+            for child in root_node.children:
+                self.assign_sizes(child)
+        else:
+            pass
+
     def obsidian_construct_cards(self, node: Node):
 
         # print("Appending", node.obsidian_json['x'], node.obsidian_json['y'])
@@ -116,10 +126,25 @@ class Tree:
         Returns:
             int: integer describing the heading level 
         """
+        # h1_id = '# '
+        # h2_id = '## '
+        # h3_id = '### '
 
-        h_ids = ['#'*i + ' ' for i in range(1,7)]
+        # if line[:len(h1_id)] == h1_id:
+        #     return 1
 
-        for i,e in enumerate(h_ids):
+        # elif line[:len(h2_id)] == h2_id:
+        #     return 2
+
+        # elif line[:len(h3_id)] == h3_id:
+        #     return 3
+
+        # else:
+        #     return -1  # using 0 as file node level.
+
+        h_ids = ['#'*i + ' ' for i in range(1, 7)]
+
+        for i, e in enumerate(h_ids):
 
             if line[:len(e)] == e:
                 return i + 1
@@ -130,6 +155,8 @@ class Tree:
     def complete_process(self):
 
         self.root_node = buchheim(self.root_node)
+        print("Assigning Sizes")
+        self.assign_sizes(self.root_node)
         self.obsidian_construct_cards(self.root_node)
         self._obsidian_connect_edges(self.root_node)
 
@@ -137,17 +164,9 @@ class Tree:
             json.dump(self.canvas_json, json_file)
 
 
-def print_tree(node):
-    print(node)
-    if len(node.children) > 0:
-        for child in node.children:
-            print_tree(child)
-    else:
-        pass
 
 
-    
-    
+
 
 
 
