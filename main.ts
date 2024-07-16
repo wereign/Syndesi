@@ -1,12 +1,15 @@
 import { Notice, Plugin } from "obsidian";
 import { exec } from "child_process";
+import { SyndesiSettings } from "settings";
 
 interface PluginSettings {
 	maxLevel: number;
+	autoSync: boolean;
 }
 
 const DefaultSettings: Partial<PluginSettings> = {
 	maxLevel: 4,
+	autoSync: false,
 };
 
 export default class Syndesi extends Plugin {
@@ -24,13 +27,17 @@ export default class Syndesi extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-	onload() {
+	async onload() {
 		console.log("Loading Plugin");
+
+		await this.loadSettings();
 
 		// Register the event to listen for file modifications
 		this.registerEvent(
 			this.app.vault.on("modify", this.onFileModify.bind(this))
 		);
+
+		this.addSettingTab(new SyndesiSettings(this.app, this));
 
 		this.addCommand({
 			id: "create-mindmap",
@@ -40,12 +47,13 @@ export default class Syndesi extends Plugin {
 	}
 
 	onFileModify(file) {
-		const activeFile = this.app.workspace.getActiveFile();
-		if (file.path === activeFile?.path){
-			console.log(`File modified: ${file.path}`);
-			this.convertToMindmap();
-			new Notice('Updated Mindmap')
+		if (!this.settings.autoSync) return;
 
+		const activeFile = this.app.workspace.getActiveFile();
+		if (file.path === activeFile?.path && file.extension === "md") {
+			console.log(`Markdown file modified: ${file.path}`);
+			this.convertToMindmap();
+			new Notice("Updated Mindmap");
 		}
 	}
 
@@ -62,11 +70,12 @@ export default class Syndesi extends Plugin {
 		const canvasPath = docPath.replace(".md", ".canvas");
 		const canvasAbsPath = `${basePath}\\${canvasPath}`;
 
-		console.log("Document path", docAbsPath);
-		console.log("Canvas path", canvasAbsPath);
+		// console.log("Document path", docAbsPath);
+		// console.log("Canvas path", canvasAbsPath);
 
 		const pythonPath = `${basePath}\\.obsidian\\plugins\\Syndesi\\main.py`;
-		const command = `python "${pythonPath}" --src "${docAbsPath}" --dest "${canvasAbsPath}"`;
+		const command = `python "${pythonPath}" --src "${docAbsPath}" --dest "${canvasAbsPath}" --max-header ${this.settings.maxLevel}`;
+		console.log(`Generated Command ${command}`)
 
 		exec(command, (error, stdout, stderr) => {
 			if (error) {

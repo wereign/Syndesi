@@ -7,12 +7,13 @@ from buchheim import buchheim
 
 
 class Tree:
-    def __init__(self, file_path, canvas_path):
+    def __init__(self, file_path, canvas_path,user_set_level=5):
 
         self.file_name = os.path.basename(file_path)
         self.file_path = file_path
         self.canvas_path = canvas_path
         self.canvas_json = {"nodes": [],	"edges": []}
+        self.user_set_level = user_set_level
         self.max_depth_level = 0
         self.root_node = self.construct_tree()
 
@@ -116,8 +117,8 @@ class Tree:
             if len(child_node.children) > 0:
                 self._obsidian_connect_edges(child_node)
 
-    @staticmethod
-    def classify_header(line: str) -> int:
+    
+    def classify_header(self,line: str) -> int:
         """Classify the level of the markdown header
 
         Args:
@@ -142,7 +143,7 @@ class Tree:
         # else:
         #     return -1  # using 0 as file node level.
 
-        h_ids = ['#'*i + ' ' for i in range(1, 7)]
+        h_ids = ['#'*i + ' ' for i in range(1, self.user_set_level+1)]
 
         for i, e in enumerate(h_ids):
 
@@ -176,15 +177,18 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='Python Tree Drawing Module',description='Draws tree, and places it into the required json')
     parser.add_argument('--src', '-s')
     parser.add_argument('--dest', '-d')
+    parser.add_argument('--max-header','-m',type=int)
 
 
     args = parser.parse_args()
 
+    print('args',args)
     file_path = args.src
     canvas_path = args.dest
+    max_header = args.max_header
 
-    print(file_path,canvas_path)
+    print(file_path,canvas_path,max_header)
 
-    tree = Tree(file_path, canvas_path)
+    tree = Tree(file_path, canvas_path,user_set_level=max_header)
     tree.complete_process()
 
