@@ -1,3 +1,20 @@
+from node import Node
+def assign_y_values(node:Node, current_y=0):
+    node.modify_y(current_y)
+
+    next_y = current_y + 500
+    if node.string == "Rootfolder_Note.":
+        print(node.string)
+        print(node.y)
+
+
+    for child in node.children:
+        assign_y_values(child, next_y)
+        
+        
+
+
+
 def buchheim(tree):
     dt = firstwalk(tree)
 

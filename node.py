@@ -4,7 +4,7 @@ import json
 
 
 class Node:
-    def __init__(self, string, level, parent=None, number=1):
+    def __init__(self, string, level, parent=None, number=1,rec_level_offset=0):
 
         # Node Configuration
         self.level = level
@@ -13,14 +13,15 @@ class Node:
         self.mod = 0
         self.x = 0
         # Automatically determining the position of the card here
-        self.y = (self.level * 500) + 400
+        self.y = (self.level * 500) + (400 * (1 +  rec_level_offset))
         # 500 is for the height of the card, and 400 for the distance between the cards
 
         # Card Contents
         self.string = string
         self.uuid = str(uuid.uuid4())
         # ignoring #, ## etc and the final newline
-        self.title_content = self.string[self.level+1:-1]
+        # self.title_content = self.string[self.level+1:-1]
+        self.title_content = self.string
 
         # Card Configuration
 
@@ -56,10 +57,6 @@ class Node:
         
         if (len(lines) - n_empty) == 1:
             
-            print("Title Only",self.string)
-            print(n_empty)
-            print(len(lines))
-            print()
             self.obsidian_json['height'] = 100
         
 
@@ -123,6 +120,11 @@ class Node:
         """Modifying the x axis value for the card"""
         self.x = x
         self.obsidian_json['x'] = x
+
+    def modify_y(self, y):
+        """Modifying the x axis value for the card"""
+        self.y = y
+        self.obsidian_json['y'] = y
 
     def reflect_x(self):
         self.obsidian_json['x'] = self.x * 500
