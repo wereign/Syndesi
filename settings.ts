@@ -40,5 +40,18 @@ export class SyndesiSettings extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					})
 			);
+		
+			new Setting(containerEl)
+			.setName("Render Links")
+			.setDesc("Recursively create mindmap for the linked notes that lie in the same folder as the origin note.\nNotes should be linked in the following format\n#render-tag[[<linked_note_name>]]")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.autoSync)
+					.onChange(async (value) => {
+						this.plugin.settings.autoSync = value;
+						console.log("Auto Sync Now", value);
+						await this.plugin.saveSettings();
+					})
+			);
 	}
 }

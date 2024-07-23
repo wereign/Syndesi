@@ -5,11 +5,13 @@ import { SyndesiSettings } from "settings";
 interface PluginSettings {
 	maxLevel: number;
 	autoSync: boolean;
+	renderLinks: boolean;
 }
 
 const DefaultSettings: Partial<PluginSettings> = {
 	maxLevel: 4,
 	autoSync: false,
+	renderLinks: false
 };
 
 export default class Syndesi extends Plugin {
@@ -74,7 +76,7 @@ export default class Syndesi extends Plugin {
 		// console.log("Canvas path", canvasAbsPath);
 
 		const pythonPath = `${basePath}\\.obsidian\\plugins\\Syndesi\\main.py`;
-		const command = `python "${pythonPath}" --src "${docAbsPath}" --dest "${canvasAbsPath}" --max-header ${this.settings.maxLevel}`;
+		const command = `python "${pythonPath}" --src "${docAbsPath}" --dest "${canvasAbsPath}" --max-header ${this.settings.maxLevel} --render-links ${this.settings.renderLinks}`;
 		console.log(`Generated Command ${command}`)
 
 		exec(command, (error, stdout, stderr) => {

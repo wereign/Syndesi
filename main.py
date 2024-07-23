@@ -7,26 +7,21 @@ from buchheim import buchheim, assign_y_values
 
 
 class Tree:
-    def __init__(self,note_dir, file_name, canvas_path,user_set_level=5):
+    def __init__(self,file_path, canvas_path,user_set_level=5,render_linked_pages=False):
 
-        self.notes_dir = note_dir
-        self.file_name = file_name
-        self.canvas_path = f"{note_dir}/{canvas_path}"
+        self.file_path = file_path
+        self.notes_dir = os.path.dirname(file_path)
+        self.canvas_path = canvas_path
+        self.render_linked_pages = render_linked_pages
         self.canvas_json = {"nodes": [],	"edges": []}
         self.user_set_level = user_set_level
         self.child_page_level = 69
         self.max_depth_level = 0
         self.root_node = self.construct_tree()
-        
-        
-        # print("children")
-        # print(self.root_node)
-        # print(self.root_node.children)
 
     def get_file(self):
         
-        file_path = f"{self.notes_dir}/{self.file_name}"
-        with open(file_path) as md_file:
+        with open(self.file_path) as md_file:
             all_lines = md_file.readlines()
         return all_lines
 
@@ -34,7 +29,7 @@ class Tree:
 
         all_lines = self.get_file()
 
-        all_nodes = self.create_nodes_list(all_lines, self.file_name)
+        all_nodes = self.create_nodes_list(all_lines, self.file_path)
         tree_node = self._construct_tree(all_nodes)
         
         if debug:
@@ -46,38 +41,40 @@ class Tree:
 
         return tree_node
 
-    def create_nodes_list(self, all_lines, file_name):
+    def create_nodes_list(self, all_lines, file_path):
 
-        root_node_content = file_name[:-2]
+        root_node_content = file_path[:-2]
         root_node = Node(root_node_content, 0)
         nodes = [root_node]
 
         current_node = None
-        last_level = 0
         for line in all_lines:
             
             level = self.classify_header(line)
 
             if 0 < level and level != self.child_page_level:
-                node = Node(line, level, file_name)
+                node = Node(line, level, file_path)
 
                 nodes.append(node)
                 current_node = node
-                last_level = level
+                
             
+            elif self.render_linked_pages and (level == self.child_page_level):
+                    print("here",self.render_linked_pages and (level == self.child_page_level))
+                    file_name = self.extract_single_bracket_content(line) + ".md"
+                    canvas_name = self.extract_single_bracket_content(line) + ".canvas"
+                    
 
-            # compulsory recursive for now.
-            elif level == self.child_page_level:
-                file_name = self.extract_single_bracket_content(line) + ".md"
-                canvas_path = self.extract_single_bracket_content(line) + ".canvas"
-                
-                print("\nRecursing")
-                print(f'File Name: {file_name}')
-                
-                rec_tree = Tree(self.notes_dir,file_name,canvas_path,self.user_set_level)
-                tmp_node = rec_tree.construct_tree()
-                tmp_node.level = self.user_set_level
-                nodes.append(tmp_node)            
+                    file_path = f"{self.notes_dir}/{file_name}"
+                    canvas_path = f"{self.notes_dir}/{canvas_name}"
+                    
+                    print("\nRecursing")
+                    print(f'File Name: {file_path}')
+                    
+                    rec_tree = Tree(file_path,canvas_path,self.user_set_level)
+                    tmp_node = rec_tree.construct_tree()
+                    tmp_node.level = self.user_set_level
+                    nodes.append(tmp_node)            
             
             else:
                 # the line is not a level changing line, append it to current node if it exists.
@@ -217,10 +214,10 @@ class Tree:
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(prog='Python Tree Drawing Module',description='Draws tree, and places it into the required json')
-    parser.add_argument('--dir')
     parser.add_argument('--src', '-s')
     parser.add_argument('--dest', '-d')
     parser.add_argument('--max-header','-m',type=int)
+    parser.add_argument('--render-links','-r',type=bool)
 
 
 
@@ -228,13 +225,13 @@ if __name__ == "__main__":
 
     print('args',args)
 
-    dir = args.dir
-    file_name = args.src
+    file_path = args.src
     canvas_path = args.dest
     max_header = args.max_header
+    render_links = args.render_links
 
-    print(file_name,canvas_path,max_header)
+    print(file_path,canvas_path,max_header)
 
-    tree = Tree(dir,file_name, canvas_path,user_set_level=max_header)
+    tree = Tree(file_path, canvas_path,user_set_level=max_header,render_linked_pages=render_links)
     tree.complete_process()
 

@@ -1,1 +1,1 @@
-python main.py --dir "C:\Users\viren\Desktop\Buildspace\Syndesi\Sandbox Vault\Test Folder" --src "Module 4.md"  --dest "Recursive.canvas"  --max-header 3
+python main.py --dir "C:\Users\viren\Desktop\Buildspace\Syndesi\Sandbox Vault\Test Folder" --src "Module 4.md"  --dest "Recursive.canvas"  --max-header 3 --render-links true
