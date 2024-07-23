@@ -43,7 +43,7 @@ class Tree:
 
     def create_nodes_list(self, all_lines, file_path):
 
-        root_node_content = file_path[:-2]
+        root_node_content = os.path.basename(file_path)[:-3]
         root_node = Node(root_node_content, 0)
         nodes = [root_node]
 
@@ -67,7 +67,7 @@ class Tree:
 
                     file_path = f"{self.notes_dir}/{file_name}"
                     canvas_path = f"{self.notes_dir}/{canvas_name}"
-                    
+
                     print("\nRecursing")
                     print(f'File Name: {file_path}')
                     
